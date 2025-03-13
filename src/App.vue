@@ -1,14 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
-import instance from './helpers/axios.js'
-import { onMounted } from 'vue'
-
-onMounted(() => {
-  instance.get('/sanctum/csrf-cookie').then(response => {
-    console.log(response)
-  });
-})
 </script>
 
 <template>
@@ -21,6 +13,8 @@ onMounted(() => {
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/login">Login</RouterLink>
+        <RouterLink to="/logout">Logout</RouterLink>
       </nav>
     </div>
   </header>
