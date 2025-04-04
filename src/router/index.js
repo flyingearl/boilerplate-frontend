@@ -78,7 +78,6 @@ router.beforeEach(async (to) => {
 
   if (to.meta.requiresAuth && !checked.success) {
     if (checked.redirect) {
-      console.log('redirect', checked.redirect)
       return checked.redirect
     } else {
       return '/login'

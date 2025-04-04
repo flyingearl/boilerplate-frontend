@@ -16,7 +16,7 @@ async function resendVerificationEmail() {
 
 <template>
   <div>
-    Please verify your email
+    An email has been sent to your email address. Please check your inbox and click the link to verify your email.
   </div>
   <div class="mt-8" v-if="!sent">
     <button

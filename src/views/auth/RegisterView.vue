@@ -15,7 +15,7 @@ const errors = ref(null)
 
 async function handleRegister() {
   const checked = await authStore.checkAuth()
-  if (checked) {
+  if (checked.success) {
     await router.push({ name: 'home' })
   } else {
     const registered = await authStore.register(
