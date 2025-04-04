@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import { useAuthStore } from '@/stores/authStore.js'
 
 const router = createRouter({
+  linkExactActiveClass: 'text-blue-600',
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
@@ -25,6 +26,15 @@ const router = createRouter({
       }
     },
     {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/auth/RegisterView.vue'),
+      meta: {
+        requiresAuth: false,
+        shouldBeGuest: true
+      }
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('../views/auth/LoginView.vue'),
@@ -34,11 +44,29 @@ const router = createRouter({
       }
     },
     {
+      path: '/confirm-email',
+      name: 'confirm.email',
+      component: () => import('../views/auth/ConfirmEmailView.vue'),
+      meta: {
+        requiresAuth: false,
+        shouldBeGuest: false
+      }
+    },
+    {
+      path: '/auth/verify-email/:id/:hash',
+      name: 'verify.email',
+      component: () => import('../views/auth/VerifyEmailView.vue'),
+      meta: {
+        requiresAuth: false,
+        shouldBeGuest: false
+      }
+    },
+    {
       path: '/logout',
       name: 'logout',
       component: () => import('../views/auth/LogoutView.vue'),
       meta: {
-        requiresAuth: true,
+        requiresAuth: false,
       }
     }
   ],
@@ -48,8 +76,25 @@ router.beforeEach(async (to) => {
   const authStore = useAuthStore();
   const checked = await authStore.checkAuth()
 
-  if (to.meta.requiresAuth && !checked) return '/login'
-  if (to.meta.shouldBeGuest && checked) return '/'
+  if (to.meta.requiresAuth && !checked.success) {
+    if (checked.redirect) {
+      console.log('redirect', checked.redirect)
+      return checked.redirect
+    } else {
+      return '/login'
+    }
+  } else if (
+    !checked.success
+    && checked.redirect === '/confirm-email'
+    && to.name !== 'confirm.email'
+    && to.name !== 'verify.email'
+    && to.name !== 'logout'
+  ) {
+    return '/confirm-email'
+  }
+  //
+  // // if (to.meta.requiresAuth && !checked) return '/login'
+  // if (to.meta.shouldBeGuest && checked) return '/'
 })
 
 export default router
