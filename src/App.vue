@@ -1,6 +1,14 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import instance from './helpers/axios.js'
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  instance.get('/sanctum/csrf-cookie').then(response => {
+    console.log(response)
+  });
+})
 </script>
 
 <template>
