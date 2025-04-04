@@ -1,11 +1,11 @@
 import axios from 'axios'
 
-const instance = axios.create({
+const api = axios.create({
   baseURL: 'http://api.boilerplate.test',
   timeout: 1000,
 });
 
-instance.defaults.withCredentials = true;
-instance.defaults.withXSRFToken = true;
+api.defaults.withCredentials = true;
+api.defaults.withXSRFToken = true;
 
-export default instance;
+export default api;
