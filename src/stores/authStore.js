@@ -9,15 +9,74 @@ export const useAuthStore = defineStore('auth', () => {
   async function verifyEmail(id, hash, params) {
     try {
       await api.get('/api/verify-email/' + id + '/' + hash, { params })
+      return {
+        hasErrors: false,
+      }
+    } catch (e) {
+      console.log('e', e)
+      return {
+        hasErrors: true,
+        errors: e.response.data.errors,
+      }
+    }
+  }
+
+  async function forgotPassword(email) {
+    console.log('email', email)
+    try {
+      const response = await api.post('/forgot-password', {
+        email: email,
+      })
+
+      if (response.status === 200) {
         return {
           hasErrors: false,
         }
+      }
     } catch (e) {
-      console.log('e', e)
+      return {
+        hasErrors: true,
+        errors: e.response.data.errors,
+      }
+    }
+  }
+
+  async function updateProfile(profile) {
+    try {
+      const response = await api.post('/api/profile', profile)
+
+      if (response.status === 200) {
         return {
-          hasErrors: true,
-          errors: e.response.data.errors
+          hasErrors: false,
         }
+      }
+    } catch (e) {
+      return {
+        hasErrors: true,
+        errors: e.response.data.errors,
+      }
+    }
+  }
+
+  async function resetPassword(token, email, password, password_confirmation) {
+    try {
+      const response = await api.post('/reset-password', {
+        token: token,
+        email: email,
+        password: password,
+        password_confirmation: password_confirmation,
+      })
+
+      if (response.status === 200) {
+        return {
+          hasErrors: false,
+        }
+      }
+    } catch (e) {
+      return {
+        hasErrors: true,
+        errors: e.response.data.errors,
+      }
     }
   }
 
@@ -27,7 +86,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await api.post('/login', {
         email: email,
-        password: password
+        password: password,
       })
       if (response.status === 200) {
         isAuthenticated.value = true
@@ -44,7 +103,7 @@ export const useAuthStore = defineStore('auth', () => {
       isAuthenticated.value = false
       return {
         hasErrors: true,
-        errors: e.response.data.errors
+        errors: e.response.data.errors,
       }
     }
   }
@@ -56,7 +115,7 @@ export const useAuthStore = defineStore('auth', () => {
         email: email,
         name: full_name,
         password: password,
-        password_confirmation: password_confirmation
+        password_confirmation: password_confirmation,
       })
       return {
         hasErrors: false,
@@ -64,7 +123,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (e) {
       return {
         hasErrors: true,
-        errors: e.response.data.errors
+        errors: e.response.data.errors,
       }
     }
   }
@@ -95,7 +154,10 @@ export const useAuthStore = defineStore('auth', () => {
         redirect: null,
       }
     } catch (e) {
-      if (e.response.status === 403 && e.response.data.message === "Your email address is not verified."){
+      if (
+        e.response.status === 403 &&
+        e.response.data.message === 'Your email address is not verified.'
+      ) {
         console.log('need to verify email')
         isAuthenticated.value = true
         return {
@@ -117,5 +179,18 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = authenticated
   }
 
-  return { isAuthenticated, user, logout, checkAuth, login, getUser, register, verifyEmail, setAuth }
+  return {
+    isAuthenticated,
+    user,
+    logout,
+    checkAuth,
+    login,
+    getUser,
+    register,
+    verifyEmail,
+    setAuth,
+    forgotPassword,
+    resetPassword,
+    updateProfile,
+  }
 })

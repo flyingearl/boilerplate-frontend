@@ -46,6 +46,9 @@ async function handleLogin() {
         v-model="password"
       />
       <SubmitButton :display_text="`Login`" />
+      <p class="mt-5">
+        Forgot your password? <RouterLink class="text-indigo-600 hover:text-indigo-500" to="/auth/forgot-password">Click here</RouterLink>
+      </p>
     </form>
   </main>
 </template>

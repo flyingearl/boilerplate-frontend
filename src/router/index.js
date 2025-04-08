@@ -15,12 +15,12 @@ const router = createRouter({
       }
     },
     {
-      path: '/about',
-      name: 'about',
+      path: '/account/profile',
+      name: 'account.profile',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      component: () => import('../views/account/ProfileView.vue'),
       meta: {
         requiresAuth: true,
       }
@@ -59,6 +59,24 @@ const router = createRouter({
       meta: {
         requiresAuth: false,
         shouldBeGuest: false
+      }
+    },
+    {
+      path: '/auth/forgot-password',
+      name: 'forgot.password',
+      component: () => import('../views/auth/ForgotPasswordView.vue'),
+      meta: {
+        requiresAuth: false,
+        shouldBeGuest: true
+      }
+    },
+    {
+      path: '/auth/reset-password/:token/:email',
+      name: 'reset.password',
+      component: () => import('../views/auth/ResetPasswordView.vue'),
+      meta: {
+        requiresAuth: false,
+        shouldBeGuest: true
       }
     },
     {

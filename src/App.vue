@@ -24,7 +24,7 @@ const alertStore = useAlertStore()
   <div class="m-8">
     <div class="space-x-8 mb-8">
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about" v-if="authStore.isAuthenticated">About</RouterLink>
+      <RouterLink to="/account/profile" v-if="authStore.isAuthenticated">Profile</RouterLink>
       <RouterLink to="/login" v-if="!authStore.isAuthenticated">Login</RouterLink>
       <RouterLink to="/register" v-if="!authStore.isAuthenticated">Register</RouterLink>
       <RouterLink to="/logout" v-if="authStore.isAuthenticated">Logout</RouterLink>
