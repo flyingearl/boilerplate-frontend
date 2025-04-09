@@ -18,7 +18,12 @@ async function handleLogin() {
   } else {
     const loggedIn = await authStore.login(email.value, password.value)
     if (!loggedIn.hasErrors) {
-      await router.push({ name: 'home' })
+      if (loggedIn.redirect) {
+        console.log('here')
+        await router.push({ name: loggedIn.redirect })
+      } else {
+        await router.push({ name: 'home' })
+      }
     } else {
       errors.value = loggedIn.errors
     }

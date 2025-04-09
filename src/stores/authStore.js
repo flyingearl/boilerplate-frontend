@@ -89,9 +89,16 @@ export const useAuthStore = defineStore('auth', () => {
         password: password,
       })
       if (response.status === 200) {
-        isAuthenticated.value = true
-        return {
-          hasErrors: false,
+        if (response.data.two_factor) {
+          return {
+            hasErrors: false,
+            redirect: 'auth.2fa',
+          }
+        } else {
+          isAuthenticated.value = true
+          return {
+            hasErrors: false,
+          }
         }
       } else {
         isAuthenticated.value = false
@@ -101,6 +108,54 @@ export const useAuthStore = defineStore('auth', () => {
       }
     } catch (e) {
       isAuthenticated.value = false
+      return {
+        hasErrors: true,
+        errors: e.response.data.errors,
+      }
+    }
+  }
+
+  async function send2FACode(code) {
+    try {
+      await api.post('/two-factor-challenge', {
+        code: code
+      })
+      return {
+        hasErrors: false,
+      }
+    } catch (e) {
+      console.log('send2FACode error', e)
+      return {
+        hasErrors: true,
+        errors: e.response.data.errors,
+      }
+    }
+  }
+
+  async function remove2FA() {
+    try {
+      const response = await api.delete('/user/two-factor-authentication');
+      if (response.status === 200) {
+        return {
+          hasErrors: false,
+        }
+      }
+    } catch (e) {
+      return {
+        hasErrors: true,
+        errors: e.response.data.errors,
+      }
+    }
+  }
+
+  async function getRecoveryCodes() {
+    try {
+      const response = await api.get('/user/two-factor-recovery-codes');
+      return {
+        hasErrors: false,
+        codes: response.data
+      }
+    } catch (e) {
       return {
         hasErrors: true,
         errors: e.response.data.errors,
@@ -141,6 +196,60 @@ export const useAuthStore = defineStore('auth', () => {
     return userData.data
   }
 
+  async function confirmPassword(password) {
+    try {
+      await api.post('user/confirm-password', {
+        password: password,
+      })
+      return {
+        hasErrors: false,
+      }
+    } catch (e) {
+      console.log('confirm password error', e)
+      return {
+        hasErrors: true,
+        errors: e.response.data.errors,
+      }
+    }
+  }
+
+  async function checkTwoFactorEnabled() {
+    return !!user.value.two_factor_confirmed_at;
+  }
+
+  async function enableTwoFactor() {
+    try {
+      await api.post('user/two-factor-authentication');
+      return {
+        hasErrors: false,
+      }
+    } catch (e) {
+      console.log('two factor error', e)
+    }
+  }
+
+  async function confirmTwoFactor(code) {
+    try {
+      await api.post('user/confirmed-two-factor-authentication', {
+        code: code,
+      })
+    } catch (e) {
+      console.log('two factor confirm error', e)
+    }
+  }
+
+  async function getTwoFactorSVG() {
+    try {
+      const response = await api.get('user/two-factor-qr-code');
+      return response.data.svg
+    } catch (e) {
+      return {
+        hasErrors: true,
+        errors: e.response.data.message,
+      }
+    }
+  }
+
   async function checkAuth() {
     // Make call to user endpoint to check if user is authenticated
     // if authenticated, set isAuthenticated to true and user to the user object and return true
@@ -149,6 +258,7 @@ export const useAuthStore = defineStore('auth', () => {
       const userData = await api.get('api/user')
       isAuthenticated.value = true
       user.value = userData.data
+      console.log('userData', userData.data)
       return {
         success: true,
         redirect: null,
@@ -192,5 +302,13 @@ export const useAuthStore = defineStore('auth', () => {
     forgotPassword,
     resetPassword,
     updateProfile,
+    checkTwoFactorEnabled,
+    enableTwoFactor,
+    confirmPassword,
+    getTwoFactorSVG,
+    confirmTwoFactor,
+    send2FACode,
+    getRecoveryCodes,
+    remove2FA,
   }
 })

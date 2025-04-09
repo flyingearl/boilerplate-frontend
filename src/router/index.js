@@ -80,6 +80,15 @@ const router = createRouter({
       }
     },
     {
+      path: '/auth/two-factor-authentication',
+      name: 'auth.2fa',
+      component: () => import('../views/auth/TwoFactorView.vue'),
+      meta: {
+        requiresAuth: false,
+        shouldBeGuest: false
+      }
+    },
+    {
       path: '/logout',
       name: 'logout',
       component: () => import('../views/auth/LogoutView.vue'),
